@@ -1,14 +1,33 @@
 #include "DataObject.h"
-
-const DataObject& DataObject::operator[](DataObject object)
+#include <iostream>
+DataObject& DataObject::operator[](DataObject object)
 {
+	return tree[object];
+}
+
+DataObject ProviderObject::operator[](DataObject object)
+{
+	DataObject returnObject;
 	if (this->tree.count(object) == 0)
 	{
-		this->tree.insert(std::pair<DataObject, DataObject>(object, fetch(object)));
+		returnObject = std::string(fetch(object));
+		if (std::string(returnObject) != "Error")
+		{	
+			this->tree.insert(std::pair<DataObject, DataObject>(object, returnObject));
+		}
 	}
-	DataObjectIterator iter = this->begin()
-	for (; iter != this->end(); iter++)
-	return (DataObject)this->tree[object];
+
+	DataObjectTree::iterator iter = begin();
+	for (; iter != end(); iter++)
+	{
+		if (iter->first == object)
+		{
+			returnObject = iter->second;
+			break;
+		}
+	}
+
+	return returnObject;
 }
 
 DataObjectTree::iterator DataObject::begin()
@@ -23,17 +42,17 @@ DataObjectTree::iterator DataObject::end()
 
 DataObject DataObject::operator=(DataObject object)
 {
-	object = *this;
+	std::string::operator=(std::string(object));
 
-	DataObjectTree::iterator iter = this->begin();
-	for (; iter != this->end(); iter++)
+	DataObjectTree::iterator iter = object.begin();
+	for (; iter != object.end(); iter++)
 	{
-		object.tree.insert(*iter);
+		this->tree.insert(*iter);
 	}
 	return *this;
 }
 
-DataObject DataObject::fetch(DataObject& object)
+DataObject ProviderObject::fetch(DataObject object)
 {
 	return "Not Supported";
 }
