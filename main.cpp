@@ -65,5 +65,5 @@ int main()
 
 	std::cout << "Two Level fetch command, data is present" << std::endl;
 	provider["Guid"]["socketId"] = "2";
-	std::cout << "expect 2 actual " << provider["Guid"]["sokcetId"] << std::endl;	
+	std::cout << "expect 2 actual " << provider["Guid"]["socketId"] << std::endl;	
 }
