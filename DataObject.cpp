@@ -1,33 +1,9 @@
 #include "DataObject.h"
 #include <iostream>
+
 DataObject& DataObject::operator[](DataObject object)
 {
 	return tree[object];
-}
-
-DataObject ProviderObject::operator[](DataObject object)
-{
-	DataObject returnObject;
-	if (this->tree.count(object) == 0)
-	{
-		returnObject = std::string(fetch(object));
-		if (std::string(returnObject) != "Error")
-		{	
-			this->tree.insert(std::pair<DataObject, DataObject>(object, returnObject));
-		}
-	}
-
-	DataObjectTree::iterator iter = begin();
-	for (; iter != end(); iter++)
-	{
-		if (iter->first == object)
-		{
-			returnObject = iter->second;
-			break;
-		}
-	}
-
-	return returnObject;
 }
 
 DataObjectTree::iterator DataObject::begin()
@@ -40,19 +16,57 @@ DataObjectTree::iterator DataObject::end()
 	return tree.end();
 }
 
+DataObject DataObject::operator=(const char* str)
+{
+	std::string::operator=(str);
+	return *this;
+}
+
+DataObject DataObject::operator=(std::string str)
+{
+	std::string::operator=(str);
+	return *this;
+}
+
 DataObject DataObject::operator=(DataObject object)
 {
-	std::string::operator=(std::string(object));
+	std::string::operator=(object);
 
 	DataObjectTree::iterator iter = object.begin();
 	for (; iter != object.end(); iter++)
 	{
-		this->tree.insert(*iter);
+		this->tree[iter->first] = iter->second;
 	}
+
 	return *this;
+}
+
+void DataObject::dump()
+{
+	static std::string indent;
+	indent += "	";
+
+	DataObjectIterator iter = begin();
+	for (; iter != end(); iter++)
+	{
+		std::cout << indent << iter->first << "->" << iter->second << std::endl;
+		iter->second.dump();	
+	}
+
+	indent.erase(0,1);
+}
+
+DataObject& ProviderObject::operator[](DataObject object)
+{
+	if (this->tree.count(object) == 0)
+	{
+		this->tree[object] = fetch(object);
+	}
+
+	return tree[object];
 }
 
 DataObject ProviderObject::fetch(DataObject object)
 {
-	return "Not Supported";
+	return "fetching " + object;
 }

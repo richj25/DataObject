@@ -4,7 +4,7 @@
 class DataObject;
 
 typedef std::map<DataObject, DataObject> DataObjectTree; 
-
+typedef DataObjectTree::iterator DataObjectIterator;
 class DataObject : public std::string
 {
 	public:
@@ -13,19 +13,21 @@ class DataObject : public std::string
 		DataObject(const char *str) : std::string(str){};
 		DataObject& operator[](DataObject);
 		DataObject operator=(DataObject);
-		DataObjectTree::iterator begin();
-		DataObjectTree::iterator end();
+		DataObject operator=(const char *);
+		DataObject operator=(std::string);
+		DataObjectIterator begin();
+		DataObjectIterator end();
+		void dump();
 		DataObjectTree tree;
 };
 
-typedef std::map<std::string, DataObject(*)(DataObject&)> DispatchTable;
 
-class ProviderObject : private DataObject
+class ProviderObject : public DataObject
 {
 	public:
-		DataObject request(DataObject& object);
-		DataObject operator[](DataObject);
+		DataObject& operator[](DataObject);
 	private:
-		DispatchTable dispatch;
 		DataObject fetch(DataObject);
+		DataObject firstObject;
+		DataObject lastObject;
 };
